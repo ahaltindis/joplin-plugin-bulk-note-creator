@@ -1,6 +1,7 @@
 import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { setBulkCreateView } from './views/bulkCreateView';
+import { createNote } from './actions'
 
 
 joplin.plugins.register({
@@ -11,10 +12,15 @@ joplin.plugins.register({
 			name: "createBulkNotes",
 			label: "Create bulk notes",
 			execute: async () => {
-				setBulkCreateView(dialogViewHandle);
+				const currentFolder = await joplin.workspace.selectedFolder();
+
+				setBulkCreateView(dialogViewHandle, currentFolder.title);
 
 				const result = await joplin.views.dialogs.open(dialogViewHandle);
 				console.info('Dialog result: ' + JSON.stringify(result));
+				if (result.id === "create") {
+					await createNote(currentFolder.id, "title", "body", 0);
+				}
 			}
 		});
 
