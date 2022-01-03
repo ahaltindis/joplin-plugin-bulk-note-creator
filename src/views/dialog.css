@@ -1,3 +1,20 @@
 body {
     font-size: 14px;
 }
+
+.inputContainer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.inputTitle {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+input {
+    height: 25px;
+    font-size: 16px;
+    width: 95%;
+}
