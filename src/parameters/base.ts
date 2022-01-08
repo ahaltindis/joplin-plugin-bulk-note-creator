@@ -27,6 +27,9 @@ export class Parameter {
   }
 
   public processInput(input: BulkProperties, raw: Record<string, string>): BulkProperties {
-    return input;
+    return {
+      ...input,
+      [this.name]: raw[this.name]
+    }
   }
 }

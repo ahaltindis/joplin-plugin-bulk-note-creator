@@ -2,7 +2,7 @@ import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { setBulkCreateView } from './views/bulkCreateView';
 import { createNoteFromBulkNote, prepareBulkNotes } from './actions'
-import { Parameter, StringParameter, NumberParameter, BinaryParameter } from './parameters';
+import { Parameter, StringParameter, NumberParameter, BinaryParameter, RecurrenceParameter } from './parameters';
 
 joplin.plugins.register({
 	onStart: async function() {
@@ -16,6 +16,8 @@ joplin.plugins.register({
 				new StringParameter("Note Body", "bodyTemplate"),
 				new BinaryParameter("Is ToDo", "isTodo", "No", "Yes"),
 				new NumberParameter("Total", "total"),
+				new RecurrenceParameter("Recurrence 1", "rec1"),
+				new RecurrenceParameter("Recurrence 2", "rec2"),
 			];
 
 			const formName = await setBulkCreateView(dialogViewHandle, currentFolder.title, parameters);

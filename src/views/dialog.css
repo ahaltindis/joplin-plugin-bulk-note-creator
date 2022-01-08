@@ -1,5 +1,6 @@
 body {
     font-size: 14px;
+    min-width: 400px;
 }
 
 .inputContainer {
@@ -17,4 +18,10 @@ input, select {
     height: 25px;
     font-size: 16px;
     width: 95%;
+}
+
+.recurrenceDay input {
+    display: inline;
+    width: min-content;
+    font-size: 14px;
 }
