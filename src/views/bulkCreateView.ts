@@ -10,9 +10,11 @@ export const setBulkCreateView = async (viewHandle: string, currentFolderName: s
   await joplin.views.dialogs.setHtml(viewHandle, `
     <h3>Bulk Create Notes</h3>
     <p>Will create in <i>${currentFolderName}</i></p>
-    <form name="${formName}">
-      ${parametersHTML}
-    </form>
+    <div style="overflow-y: scroll; height:400px;">
+      <form name="${formName}">
+        ${parametersHTML}
+      </form>
+    </div>
   `);
 
   await joplin.views.dialogs.setButtons(viewHandle, [{ id: "create", title: "Create" }, { id: "cancel" }]);
