@@ -1,4 +1,5 @@
 import joplin from "api";
+import { Parameter } from "./parameters";
 import { BulkNote, BulkProperties } from "./types";
 
 export const createNoteFromBulkNote = async (folderId: string, note: BulkNote): Promise<void> => {
@@ -11,14 +12,23 @@ export const createNoteFromBulkNote = async (folderId: string, note: BulkNote): 
   });
 }
 
-export const prepareBulkNotes = (properties: BulkProperties): BulkNote[] => {
-  console.info("creating bulk notes with properties: " + JSON.stringify(properties));
+export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Parameter[]): BulkNote[] => {
+  console.info("creating bulk notes with rawData: " + JSON.stringify(rawData));
 
-  return Array.from(Array(Number.parseFloat(properties.total))).map((_, n) => {
+  let bulkProperties: BulkProperties = {
+    titleTemplate: '',
+    bodyTemplate: '',
+    isTodo: 0,
+    total: 0
+  };
+
+  parameters.forEach(parameter => bulkProperties = parameter.processInput(bulkProperties, rawData));
+
+  return Array.from(Array(bulkProperties.total)).map((_, n) => {
     return {
-      title: properties.titleTemplate,
-      body: properties.bodyTemplate,
-      isTodo: properties.isTodo || 0
+      title: bulkProperties.titleTemplate,
+      body: bulkProperties.bodyTemplate,
+      isTodo: bulkProperties.isTodo || 0
     }
   });
 }

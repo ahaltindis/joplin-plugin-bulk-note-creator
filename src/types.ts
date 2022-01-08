@@ -3,7 +3,7 @@ export interface BulkProperties {
   titleTemplate: string;
   bodyTemplate: string;
   isTodo: 0 | 1;
-  total: string;
+  total: number;
 }
 
 export interface BulkNote {

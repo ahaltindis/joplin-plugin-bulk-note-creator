@@ -2,7 +2,7 @@ import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { setBulkCreateView } from './views/bulkCreateView';
 import { createNoteFromBulkNote, prepareBulkNotes } from './actions'
-
+import { Parameter, StringParameter, NumberParameter } from './parameters';
 
 joplin.plugins.register({
 	onStart: async function() {
@@ -10,12 +10,19 @@ joplin.plugins.register({
 
 		const createBulkNotes = async () => {
 			const currentFolder = await joplin.workspace.selectedFolder();
-			setBulkCreateView(dialogViewHandle, currentFolder.title);
+
+			const parameters: Parameter[] = [
+				new StringParameter("Note Title", "titleTemplate"),
+				new StringParameter("Note Body", "bodyTemplate"),
+				new NumberParameter("Total", "total"),
+			];
+
+			const formName = await setBulkCreateView(dialogViewHandle, currentFolder.title, parameters);
 			const result = await joplin.views.dialogs.open(dialogViewHandle);
 
 			if (result.id === "create") {
 				console.info('Dialog result: ' + JSON.stringify(result));
-				const bulkNotes = prepareBulkNotes(result.formData.bulkProperties);
+				const bulkNotes = prepareBulkNotes(result.formData[formName], parameters);
 				console.info('notes will be created: ' + JSON.stringify(bulkNotes));
 				bulkNotes.forEach(async bulkNote => await createNoteFromBulkNote(currentFolder.id, bulkNote));
 			}
