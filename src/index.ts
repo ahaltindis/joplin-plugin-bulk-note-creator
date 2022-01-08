@@ -2,7 +2,7 @@ import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { setBulkCreateView } from './views/bulkCreateView';
 import { createNoteFromBulkNote, prepareBulkNotes } from './actions'
-import { Parameter, StringParameter, NumberParameter } from './parameters';
+import { Parameter, StringParameter, NumberParameter, BinaryParameter } from './parameters';
 
 joplin.plugins.register({
 	onStart: async function() {
@@ -14,6 +14,7 @@ joplin.plugins.register({
 			const parameters: Parameter[] = [
 				new StringParameter("Note Title", "titleTemplate"),
 				new StringParameter("Note Body", "bodyTemplate"),
+				new BinaryParameter("Is ToDo", "isTodo", "No", "Yes"),
 				new NumberParameter("Total", "total"),
 			];
 

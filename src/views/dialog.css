@@ -13,7 +13,7 @@ body {
     margin-bottom: 5px;
 }
 
-input {
+input, select {
     height: 25px;
     font-size: 16px;
     width: 95%;
