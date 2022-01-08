@@ -12,6 +12,10 @@ export const createNoteFromBulkNote = async (folderId: string, note: BulkNote): 
   });
 }
 
+const fillN = (template: string, n: number): string => {
+  return template.replace("{n}", (n+1).toString());
+}
+
 export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Parameter[]): BulkNote[] => {
   console.info("creating bulk notes with rawData: " + JSON.stringify(rawData));
 
@@ -26,8 +30,8 @@ export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Pa
 
   return Array.from(Array(bulkProperties.total)).map((_, n) => {
     return {
-      title: bulkProperties.titleTemplate,
-      body: bulkProperties.bodyTemplate,
+      title: fillN(bulkProperties.titleTemplate, n),
+      body: fillN(bulkProperties.bodyTemplate, n),
       isTodo: bulkProperties.isTodo || 0
     }
   });
