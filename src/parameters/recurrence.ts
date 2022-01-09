@@ -9,7 +9,7 @@ export class RecurrenceParameter extends Parameter {
 
   protected toInputHTML(): string {
     return `
-      <input name="${this.name}DateTime" type="datetime-local"></input>
+      <input name="${this.name}Date" type="date"></input>
       <div class="recurrenceDay">
         Mon: <input name="${this.name}DayMon" type="checkbox">
         Tue: <input name="${this.name}DayTue" type="checkbox">
@@ -23,10 +23,13 @@ export class RecurrenceParameter extends Parameter {
   }
 
   public processInput(input: BulkProperties, raw: Record<string, string>): BulkProperties {
+    if (raw[this.name + 'Date'] === "") {
+      return input;
+    }
     return {
       ...input,
       [this.name]: {
-        inputDateTime: raw[this.name + 'DateTime'],
+        inputDate: raw[this.name + 'Date'],
         enabledDays: [
           parseCheckboxValue(raw[this.name + 'DayMon']),
           parseCheckboxValue(raw[this.name + 'DayTue']),

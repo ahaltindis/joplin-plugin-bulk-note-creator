@@ -1,5 +1,6 @@
 import joplin from "api";
 import * as moment from "moment";
+import 'moment-recur';
 import { Parameter } from "./parameters";
 import { BulkNote, BulkProperties, Recurrence } from "./types";
 
@@ -13,16 +14,27 @@ export const createNoteFromBulkNote = async (folderId: string, note: BulkNote): 
   });
 }
 
-const calculateNextDay = (n: number, rec: Recurrence): moment.Moment => {
-  // TODO
-  return moment(new Date().getTime());
+const generateRecurrenceDates = (rec: Recurrence, total: number): moment.Moment[] => {
+  const weekdays = rec.enabledDays.map((val, i) => {
+    if (val === 0) {
+      return "";
+    }
+    let day = '';
+    day = i === 0 ? 'mon' : day;
+    day = i === 1 ? 'tue' : day;
+    day = i === 2 ? 'wed' : day;
+    day = i === 3 ? 'thu' : day;
+    day = i === 4 ? 'fri' : day;
+    day = i === 5 ? 'sat' : day;
+    day = i === 6 ? 'sun' : day;
+    return day;
+  }).filter(v => v !== "");
+
+  return (moment as any)(new Date(rec.inputDate)).recur().every(weekdays).daysOfWeek().next(total);
 }
 
-const fillVariables = (template: string, n: number, rec1?: Recurrence, rec2?: Recurrence): string => {
+const fillVariables = (template: string, n: number, rec1Dates?: moment.Moment[], rec2Dates?: moment.Moment[]): string => {
   let processed = template;
-
-  const rec1Calculated = rec1 ? calculateNextDay(n, rec1) : undefined;
-  const rec2Calculated = rec2 ? calculateNextDay(n, rec2) : undefined;
 
   const regex = /\{(?<var>[^}|]*)[|]?(?<opt>[^}]*)\}/g;
   const foundVariables = [...new Set(template.match(regex))];
@@ -42,13 +54,13 @@ const fillVariables = (template: string, n: number, rec1?: Recurrence, rec2?: Re
       }
     }
 
-    if (variable === 'rec1' && rec1Calculated) {
-      processed = processed.replace(providedVar, rec1Calculated.format(options));
+    if (variable === 'rec1' && rec1Dates) {
+      processed = processed.replace(providedVar, rec1Dates[n].format(options));
       return;
     }
 
-    if (variable === 'rec2' && rec2Calculated) {
-      processed = processed.replace(providedVar, rec2Calculated.format(options));
+    if (variable === 'rec2' && rec2Dates) {
+      processed = processed.replace(providedVar, rec2Dates[n].format(options));
       return;
     }
   });
@@ -65,15 +77,16 @@ export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Pa
     isTodo: 0,
     total: 0
   };
-
   parameters.forEach(parameter => bulkProperties = parameter.processInput(bulkProperties, rawData));
-
   console.info("creating bulk notes with bulkProperties: " + JSON.stringify(bulkProperties));
+
+  const rec1Dates = bulkProperties.rec1 ? generateRecurrenceDates(bulkProperties.rec1, bulkProperties.total) : undefined;
+  const rec2Dates = bulkProperties.rec2 ? generateRecurrenceDates(bulkProperties.rec2, bulkProperties.total) : undefined;
 
   return Array.from(Array(bulkProperties.total)).map((_, n) => {
     return {
-      title: fillVariables(bulkProperties.titleTemplate, n, bulkProperties.rec1, bulkProperties.rec2),
-      body: fillVariables(bulkProperties.bodyTemplate, n, bulkProperties.rec1, bulkProperties.rec2),
+      title: fillVariables(bulkProperties.titleTemplate, n, rec1Dates, rec2Dates),
+      body: fillVariables(bulkProperties.bodyTemplate, n, rec1Dates, rec2Dates),
       isTodo: bulkProperties.isTodo
     }
   });
