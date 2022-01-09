@@ -4,14 +4,19 @@ import 'moment-recur';
 import { Parameter } from "./parameters";
 import { BulkNote, BulkProperties, Recurrence } from "./types";
 
-export const createNoteFromBulkNote = async (folderId: string, note: BulkNote): Promise<void> => {
-  await joplin.data.post(["notes"], null, {
+export const createNoteFromBulkNote = async (folderId: string, noteRequest: BulkNote): Promise<void> => {
+  const note = await joplin.data.post(["notes"], null, {
     parent_id: folderId,
-    title: note.title,
-    body: note.body,
-    is_todo: note.isTodo,
-    todo_due: note.todoDue
+    title: noteRequest.title,
+    body: noteRequest.body,
+    is_todo: noteRequest.isTodo,
   });
+
+  const todoDue = Number.parseFloat(noteRequest.todoDue);
+  if (noteRequest.isTodo === 1 && Number.isInteger(todoDue)) {
+    // It doesn't work if we send in the post api. Not sure bug or feature!
+    await joplin.data.put(['notes', note.id], null, { todo_due: todoDue });
+  }
 }
 
 const generateRecurrenceDates = (rec: Recurrence, total: number): moment.Moment[] => {
@@ -87,7 +92,8 @@ export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Pa
     return {
       title: fillVariables(bulkProperties.titleTemplate, n, rec1Dates, rec2Dates),
       body: fillVariables(bulkProperties.bodyTemplate, n, rec1Dates, rec2Dates),
-      isTodo: bulkProperties.isTodo
+      isTodo: bulkProperties.isTodo,
+      todoDue: bulkProperties.todoDue ? fillVariables(bulkProperties.todoDue, n, rec1Dates, rec2Dates) : undefined,
     }
   });
 }

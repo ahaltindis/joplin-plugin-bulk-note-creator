@@ -15,6 +15,7 @@ joplin.plugins.register({
 				new StringParameter("Note Title", "titleTemplate"),
 				new StringParameter("Note Body", "bodyTemplate"),
 				new BinaryParameter("Is ToDo", "isTodo", "No", "Yes"),
+				new StringParameter("ToDo Due", "todoDue"),
 				new NumberParameter("Total", "total"),
 				new RecurrenceParameter("Recurrence 1", "rec1"),
 				new RecurrenceParameter("Recurrence 2", "rec2"),
