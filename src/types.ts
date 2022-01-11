@@ -1,7 +1,7 @@
 
 export interface Recurrence {
   inputDate: string;
-  enabledDays: number[];  // [0, 0, 0, 0, 0, 0, 0] starts with Monday.
+  enabledDays: string[];  // ["mon", "tue" ...]
 }
 
 export interface BulkProperties {

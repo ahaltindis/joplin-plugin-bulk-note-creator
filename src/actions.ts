@@ -20,22 +20,11 @@ export const createNoteFromBulkNote = async (folderId: string, noteRequest: Bulk
 }
 
 const generateRecurrenceDates = (rec: Recurrence, total: number): moment.Moment[] => {
-  const weekdays = rec.enabledDays.map((val, i) => {
-    if (val === 0) {
-      return "";
-    }
-    let day = '';
-    day = i === 0 ? 'mon' : day;
-    day = i === 1 ? 'tue' : day;
-    day = i === 2 ? 'wed' : day;
-    day = i === 3 ? 'thu' : day;
-    day = i === 4 ? 'fri' : day;
-    day = i === 5 ? 'sat' : day;
-    day = i === 6 ? 'sun' : day;
-    return day;
-  }).filter(v => v !== "");
-
-  return (moment as any)(new Date(rec.inputDate)).recur().every(weekdays).daysOfWeek().next(total);
+  return (moment as any)(new Date(rec.inputDate))
+    .recur()
+    .every(rec.enabledDays)
+    .daysOfWeek()
+    .next(total);
 }
 
 const fillVariables = (template: string, n: number, rec1Dates?: moment.Moment[], rec2Dates?: moment.Moment[]): string => {
