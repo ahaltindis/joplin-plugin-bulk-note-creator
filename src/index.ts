@@ -1,8 +1,15 @@
 import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { setBulkCreateView } from './views/bulkCreateView';
-import { createNoteFromBulkNote, prepareBulkNotes } from './actions'
-import { Parameter, StringParameter, NumberParameter, BinaryParameter, RecurrenceParameter } from './parameters';
+import { createNoteFromBulkNote, prepareBulkNotes } from './actions';
+import {
+	Parameter,
+	StringParameter,
+	NumberParameter,
+	BinaryParameter,
+	RecurrenceParameter,
+	BigStringParameter
+} from './parameters';
 
 joplin.plugins.register({
 	onStart: async function() {
@@ -13,7 +20,7 @@ joplin.plugins.register({
 
 			const parameters: Parameter[] = [
 				new StringParameter("Note Title", "titleTemplate"),
-				new StringParameter("Note Body", "bodyTemplate"),
+				new BigStringParameter("Note Body", "bodyTemplate"),
 				new BinaryParameter("Is ToDo", "isTodo", "No", "Yes"),
 				new StringParameter("ToDo Due", "todoDue"),
 				new NumberParameter("Total", "total"),
@@ -25,16 +32,14 @@ joplin.plugins.register({
 			const result = await joplin.views.dialogs.open(dialogViewHandle);
 
 			if (result.id === "create") {
-				console.info('Dialog result: ' + JSON.stringify(result));
 				const bulkNotes = prepareBulkNotes(result.formData[formName], parameters);
-				console.info('notes will be created: ' + JSON.stringify(bulkNotes));
 				bulkNotes.forEach(async bulkNote => await createNoteFromBulkNote(currentFolder.id, bulkNote));
 			}
 		}
 
 		await joplin.commands.register({
 			name: "createBulkNotes",
-			label: "Create bulk notes",
+			label: "Create bulk notes...",
 			execute: async () => {
 				await createBulkNotes();
 			}

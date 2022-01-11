@@ -74,8 +74,6 @@ const fillVariables = (template: string, n: number, rec1Dates?: moment.Moment[],
 }
 
 export const prepareBulkNotes = (rawData: Record<string, string>, parameters: Parameter[]): BulkNote[] => {
-  console.info("creating bulk notes with rawData: " + JSON.stringify(rawData));
-
   let bulkProperties: BulkProperties = {
     titleTemplate: '',
     bodyTemplate: '',

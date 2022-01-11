@@ -11,13 +11,13 @@ export class RecurrenceParameter extends Parameter {
     return `
       <input name="${this.name}Date" type="date"></input>
       <div class="recurrenceDay">
-        Mon: <input name="${this.name}DayMon" type="checkbox">
-        Tue: <input name="${this.name}DayTue" type="checkbox">
-        Wed: <input name="${this.name}DayWed" type="checkbox">
-        Thu: <input name="${this.name}DayThu" type="checkbox">
-        Fri: <input name="${this.name}DayFri" type="checkbox">
-        Sat: <input name="${this.name}DaySat" type="checkbox">
-        Sun: <input name="${this.name}DaySun" type="checkbox">
+        Mon:<input name="${this.name}DayMon" type="checkbox"> |
+        Tue:<input name="${this.name}DayTue" type="checkbox"> |
+        Wed:<input name="${this.name}DayWed" type="checkbox"> |
+        Thu:<input name="${this.name}DayThu" type="checkbox"> |
+        Fri:<input name="${this.name}DayFri" type="checkbox"> |
+        Sat:<input name="${this.name}DaySat" type="checkbox"> |
+        Sun:<input name="${this.name}DaySun" type="checkbox">
       </div>
     `;
   }
