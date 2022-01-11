@@ -1,24 +1,48 @@
-# Joplin Plugin
+# joplin-plugin-bulk-note-creator
 
-This is a template to create a new Joplin plugin.
+This is a simple plugin to be able to create bulk notes in Joplin.
 
-The main two files you will want to look at are:
+## Usage
+Currently below variables can be used anywhere in Note title, body and the todo due (but this will discard any non number value).
 
-- `/src/index.ts`, which contains the entry point for the plugin source code.
-- `/src/manifest.json`, which is the plugin manifest. It contains information such as the plugin a name, version, etc.
+|variable |options|example|
+|---|---|---|
+|n | none | `{n}` - 1, 2, 3...|
+|rec1 | all formatting options supported by [moment.js](https://momentjs.com/docs/#/displaying/format/) | `{rec1\|YYYY-MM-DD}` - 2022-01-16|
+|rec2 | same ^ | `{rec2\|x}` - 1642550400000|
 
-## Building the plugin
+This input
+```text
+Note Title: week {n} - {rec1|YYYY-MM-DD}
+Note Body: dummy
+Is ToDo: Yes
+ToDo Due: {rec2|x}
+Total: 5
+Recurrence 1: 16/01/2022 (Mon: checked)
+Recurrence 2: 16/01/2022 (Sun: checked)
+```
 
-The plugin is built using Webpack, which creates the compiled code in `/dist`. A JPL archive will also be created at the root, which can use to distribute the plugin.
+will create (title/body/ToDo Due):
+- week 1 - 2022-01-17 / dummy / 2022-01-23
+- week 2 - 2022-01-24 / dummy / 2022-01-30
+- week 3 - 2022-01-31 / dummy / 2022-02-06
+- week 4 - 2022-02-07 / dummy / 2022-02-13
+- week 5 - 2022-02-14 / dummy / 2022-02-20
 
+## Motivation
+I sometimes need to create many to-dos with a template and fill them only when I need them. I was planning to use Joplin data API first from a bash script but then I wanted to familiarize myself to plugin architecture too, therefore I decided to create this basic plugin. I am influenced by [template plugin](https://github.com/joplin/plugin-templates) for the code structure.
+
+The current state is satisfying what I need but there might be some improvement if it gets any attention.
+
+Few ideas for improvement:
+- Add unit tests.
+- Support modifying {n} as integer (e.g. support usage of {n+1}).
+- Support other recurrence options that `moment-recur` library supports.
+- Add recurrence parameters dynamically to dialog box.
+- Show preview of the notes before creating them.
+- Support adding tags
+
+
+## Development
 To build the plugin, simply run `npm run dist`.
-
-The project is setup to use TypeScript, although you can change the configuration to use plain JavaScript.
-
-## Updating the plugin framework
-
-To update the plugin framework, run `npm run update`.
-
-In general this command tries to do the right thing - in particular it's going to merge the changes in package.json and .gitignore instead of overwriting. It will also leave "/src" as well as README.md untouched.
-
-The file that may cause problem is "webpack.config.js" because it's going to be overwritten. For that reason, if you want to change it, consider creating a separate JavaScript file and include it in webpack.config.js. That way, when you update, you only have to restore the line that include your file.
+More on: https://joplinapp.org/api/get_started/plugins/

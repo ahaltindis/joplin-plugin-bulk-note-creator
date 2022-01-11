@@ -8,7 +8,8 @@
   },
   "license": "MIT",
   "keywords": [
-    "joplin-plugin"
+    "joplin-plugin",
+    "bulk-note"
   ],
   "devDependencies": {
     "@types/node": "^14.0.14",
